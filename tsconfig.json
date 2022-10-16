@@ -1,0 +1,41 @@
+{
+    "files": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "src/**/*.spec.ts"
+    ],
+    "compilerOptions": {
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "alwaysStrict": true,
+        "exactOptionalPropertyTypes": true,
+        "noFallthroughCasesInSwitch": true,
+        "strict": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
+        "baseUrl": "src",
+        "resolveJsonModule": true,
+        "rootDir": "src",
+        "noEmitOnError": true,
+        "outDir": "dist",
+        "sourceMap": true,
+        "allowJs": false,
+        "checkJs": true,
+        "disableSizeLimit": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "listEmittedFiles": true,
+        "incremental": true,
+        "noErrorTruncation": true,
+        "preserveWatchOutput": false,
+        "target": "es2021"
+    },
+    "watchOptions": {
+        "excludeDirectories": ["**/node_modules", "dist"]
+    }
+}
