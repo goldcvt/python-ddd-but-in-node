@@ -52,7 +52,7 @@ describe('Allocation', () => {
         allocate(orderLine, [batch]);
         expect(batch.availableQuantity).to.be.equal(8);
     });
-    it('Cannot allocate if order line quantity less than batch', () => {
+    it('Cannot allocate if order line quantity greater than batch', () => {
         const [orderLine, batch] = createBatchAndOrderLine(
             generateRef(),
             'RED-LAMP',
@@ -60,8 +60,7 @@ describe('Allocation', () => {
         );
         const newOrderlLine = new OrderLine(generateRef(), 'RED-LAMP', 13);
         expect(batch.availableQuantity).to.be.equal(10);
-        allocate(newOrderlLine, [batch]);
-        expect(batch.availableQuantity).to.be.equal(10);
+        assert.throws(() => allocate(newOrderlLine, [batch]));
     });
     it('Allocation returns used batch ref', () => {
         const sku = 'RED-LAMP';

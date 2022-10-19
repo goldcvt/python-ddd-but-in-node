@@ -47,11 +47,10 @@ export class Batch implements BatchInterface {
     }
 
     canAllocate(orderLine: OrderLineInterface) {
-        if (orderLine.sku !== this.sku) {
-            return false;
-        }
-
-        return this.availableQuantity >= orderLine.quantity;
+        return (
+            orderLine.sku === this.sku &&
+            this.availableQuantity >= orderLine.quantity
+        );
     }
 
     addAllocation(orderLine: OrderLineInterface): void {
@@ -80,5 +79,5 @@ export const allocate: AllocateDomainService = (
         }
     }
 
-    return undefined;
+    throw new OutOfStockError('Completely out of stock :(');
 };
