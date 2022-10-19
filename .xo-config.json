@@ -1,3 +1,5 @@
 {
-    "space": 4
+    "space": 4,
+    "@typescript-eslint/object-curly-spacing": "warn",
+    "object-curly-spacing": "off"
 }
