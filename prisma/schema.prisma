@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Batch {
+  id                Int         @id @default(autoincrement())
+  ref               String      @unique
+  sku               String
+  purchasedQuantity Int         @map("purchased_quantity")
+  eta               DateTime?
+  allocations       Allocation?
+
+  @@map("batches")
+}
+
+model OrderLine {
+  id         Int         @id @default(autoincrement())
+  orderRef   String      @map("order_ref")
+  sku        String
+  quantity   Int
+  allocation Allocation?
+
+  @@map("order_lines")
+}
+
+model Allocation {
+  id          Int       @id @default(autoincrement())
+  orderlineId Int       @unique @map("orderline_id")
+  batchId     Int       @unique @map("batch_id")
+  batch       Batch     @relation(fields: [batchId], references: [id])
+  orderline   OrderLine @relation(fields: [orderlineId], references: [id])
+
+  @@map("allocations")
+}
