@@ -1,7 +1,7 @@
 export type BatchInterface = {
     ref: string;
     sku: string;
-    __quantity: number;
+    purchasedQuantity: number;
     eta: Date | undefined;
     allocations: Set<OrderLineInterface>;
 

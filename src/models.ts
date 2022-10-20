@@ -1,4 +1,4 @@
-import { randomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
 import type {
     AllocateDomainService,
     BatchInterface,
@@ -18,7 +18,7 @@ export class OrderLine implements OrderLineInterface {
 export class Batch implements BatchInterface {
     eta: Date | undefined = undefined;
     allocations = new Set<OrderLineInterface>();
-    __quantity: number;
+    purchasedQuantity: number;
 
     constructor(
         readonly ref: string,
@@ -30,11 +30,11 @@ export class Batch implements BatchInterface {
             this.eta = eta;
         }
 
-        this.__quantity = quantity;
+        this.purchasedQuantity = quantity;
     }
 
     get availableQuantity() {
-        return this.__quantity - this.allocatedTotal;
+        return this.purchasedQuantity - this.allocatedTotal;
     }
 
     get allocatedTotal() {
