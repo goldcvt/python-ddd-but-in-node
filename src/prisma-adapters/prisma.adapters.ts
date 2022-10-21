@@ -1,7 +1,2 @@
-export function prismaCreateAdapter<T>(thing: T | undefined) {
-    return thing ?? null;
-}
-
-export function prismaGetAdapter<T>(thing: T | null) {
-    return thing ?? undefined;
-}
+export const prismaCreateAdapter = <T>(thing: T | undefined) => thing ?? null;
+export const prismaGetAdapter = <T>(thing: T | null) => thing ?? undefined;
