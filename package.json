@@ -4,8 +4,8 @@
     "description": "Express typescript template with zod, supertest, mocha and linting",
     "main": "index.js",
     "scripts": {
-        "test": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --require ts-node/register src/**/*.spec.ts",
-        "test:watch": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --require ts-node/register src/**/*.spec.ts --watch --watch-files src/**/*.ts",
+        "test": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --require ts-node/register 'src/**/*.spec.ts'",
+        "test:watch": "TS_NODE_PROJECT='./tsconfig.test.json' mocha --require ts-node/register 'src/**/*.spec.ts' --watch --watch-files 'src/**/*.ts'",
         "build": "tsc -p tsconfig.json",
         "watch": "tsc -p tsconfig.json --watch",
         "dev": "nodemon src/index.ts",
