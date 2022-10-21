@@ -8,12 +8,12 @@ datasource db {
 }
 
 model Batch {
-  id                Int         @id @default(autoincrement())
-  ref               String      @unique
+  id                Int          @id @default(autoincrement())
+  ref               String       @unique
   sku               String
-  purchasedQuantity Int         @map("purchased_quantity")
+  purchasedQuantity Int          @map("purchased_quantity")
   eta               DateTime?
-  allocations       Allocation?
+  allocations       Allocation[]
 
   @@map("batches")
 }
