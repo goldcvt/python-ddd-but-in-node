@@ -1,21 +1,20 @@
 import fs from 'node:fs';
-import { sync } from './cli';
 import { expect } from 'chai';
-describe('Sync think', () => {
+import { FileHashesMap, determineActions } from './cli';
+
+describe("Sync thing, plain ol' determineActions", () => {
+    const srcFolder = 'tmp';
+    const destFolder = 'tmp2';
     it('File exists in a source but not dest', () => {
-        try {
-            const source = fs.mkdtempSync('./src/cli/source/s');
-            const dest = fs.mkdtempSync('./src/cli/dest/d');
-            const fileContent = 'Yikesies!';
-            fs.writeFileSync(`${source}/file1.txt`, fileContent);
-
-            sync(source, dest);
-
-            const destContents = fs.readdirSync(`${dest}`);
-            expect(destContents).to.be.deep.equal(['file1.txt']);
-            fs.rmdirSync(`${source}`);
-            fs.rmdirSync(`${dest}`);
-        } finally {
-        }
+        const src: FileHashesMap = new Map();
+        src.set('hash1', `file1`);
+        src.set('hash2', `folder/file2`);
+        const dest: FileHashesMap = new Map();
+        const actions = [...determineActions(src, dest, srcFolder, destFolder)];
+        console.log(actions);
+        expect(actions).to.be.deep.equal([
+            ['COPY', 'tmp/file1', 'tmp2/file1'],
+            ['COPY', 'tmp/folder/file2', 'tmp2/folder/file2'],
+        ]);
     });
 });

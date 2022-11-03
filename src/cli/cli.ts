@@ -14,37 +14,82 @@ const hashFile = (filepath: string): HashedFile => {
     return hashSum.digest('hex');
 };
 
+export type FileHashesMap = Map<HashedFile, string>;
+type Actions = 'COPY' | 'MOVE' | 'DELETE';
+
+const actions = {
+    COPY: (src: string, dest: string) => {
+        // actually copy
+    },
+    MOVE: (src: string, dest: string) => {
+        // actually move
+    },
+    DELETE: (src: string, dest: string) => {
+        // actually delete
+    },
+    // yup. I'm lazy, I don't give a fuck
+} as const;
+
+export const collectHashes = (dir: string) => {
+    const files: FileHashesMap = new Map();
+    for (const filePath in fs.readdirSync(dir)) {
+        const fileHash = hashFile(path.resolve(dir, filePath));
+        files.set(fileHash, filePath);
+    }
+
+    return files;
+};
+
+// naive but whatever
+const concatPaths = (paths: string[]) => {
+    return paths.reduce((prev: string, curr: string) => {
+        return prev + '/' + curr;
+    }, paths[0] ?? '');
+};
+export function* determineActions(
+    sourceHashes: FileHashesMap,
+    destHashes: FileHashesMap,
+    source: string,
+    dest: string,
+): Generator<[Actions, string, string]> {
+    for (const [sourceHash, sourcePath] of sourceHashes.entries()) {
+        const destPath = destHashes.get(sourceHash);
+        if (!destPath) {
+            yield [
+                'COPY',
+                concatPaths([source, sourcePath]),
+                concatPaths([dest, sourcePath]),
+            ];
+        }
+
+        if (sourcePath !== destPath) {
+            yield [
+                'MOVE',
+                concatPaths([dest, destPath!]),
+                concatPaths([dest, sourcePath]),
+            ];
+        }
+    }
+
+    for (const destHash of destHashes.keys()) {
+        const sourcePath = sourceHashes.get(destHash);
+        if (!sourcePath) {
+            yield ['DELETE', source, dest];
+        }
+    }
+}
+
 // book's solution is better, it's like O(n) vs our O(n^2)
-export const sync = (source: string, dest: string): void => {
-    const sourceFiles: Record<string, HashedFile> = {};
-    const destFiles: Record<string, HashedFile> = {};
-    for (const sourcePath in fs.readdirSync(source)) {
-        sourceFiles[sourcePath] = hashFile(sourcePath);
-    }
+export const sync = (src: string, dest: string): void => {
+    const sourceFiles = collectHashes(src);
+    const destFiles = collectHashes(dest);
 
-    for (const destPath in fs.readdirSync(dest)) {
-        destFiles[destPath] = hashFile(destPath);
-    }
-
-    for (const [sourcePath, sourceHash] of Object.entries(sourceFiles)) {
-        // copy
-        if (!(sourcePath in destFiles)) {
-            fs.copyFileSync(sourcePath, dest);
-            continue;
-        }
-
-        for (const [destPath, destHash] of Object.entries(destFiles)) {
-            if (destHash === sourceHash && destPath !== sourcePath) {
-                // rename
-                fs.renameSync(destPath, `${dest}//${sourcePath}`);
-                break;
-            }
-
-            // delete
-            if (!(destPath in sourceFiles)) {
-                fs.rmSync(destPath);
-                break;
-            }
-        }
+    for (const [action, source, destination] of determineActions(
+        sourceFiles,
+        destFiles,
+        src,
+        dest,
+    )) {
+        actions[action](source, destination);
     }
 };
